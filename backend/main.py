@@ -1,37 +1,150 @@
+import os
 from pathlib import Path
 
-from fastapi import FastAPI
+from dotenv import load_dotenv
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
+from supabase import create_client, Client
 
-app = FastAPI(title="FastAPI + React")
+# Load Supabase credentials from backend/.env
+load_dotenv(Path(__file__).resolve().parent / ".env")
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise RuntimeError("Supabase credentials are missing from backend/.env")
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
+app = FastAPI(title="Saints Nexus API")
 
 
+# Course request models
+class CourseCreate(BaseModel):
+    title: str = Field(min_length=1)
+    description: str | None = None
+    price: float = Field(default=0, ge=0)
+
+
+class CourseUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1)
+    description: str | None = None
+    price: float | None = Field(default=None, ge=0)
+
+
+# Existing health endpoint
 @app.get("/api/health")
-def health() -> dict[str, str]:
+def health():
     return {"status": "ok"}
 
 
+# Existing hello endpoint
 @app.get("/api/hello")
-def hello(name: str = "World") -> dict[str, str]:
+def hello(name: str = "World"):
     return {"message": f"Hello, {name}!"}
 
 
-# EXERCISE (part 1): uncomment to add POST /api/user, then test it at /docs.
-# from pydantic import BaseModel, EmailStr
-#
-#
-# class User(BaseModel):
-#     id: int
-#     name: str
-#     email: EmailStr  # invalid emails get a 422 response automatically
-#
-#
-# @app.post("/api/user")
-# def create_user(user: User) -> dict[str, str]:
-#     return {"message": f"Hello {user.name} (ID {user.id}), we'll email you at {user.email}."}
+# CREATE a course
+@app.post("/api/courses")
+def create_course(course: CourseCreate):
+    try:
+        result = supabase.table("courses").insert(
+            course.model_dump()
+        ).execute()
+        return result.data[0]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
+# READ all courses
+@app.get("/api/courses")
+def get_courses():
+    try:
+        result = (
+            supabase.table("courses")
+            .select("*")
+            .order("id", desc=True)
+            .execute()
+        )
+        return result.data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# READ one course
+@app.get("/api/courses/{course_id}")
+def get_course(course_id: int):
+    try:
+        result = (
+            supabase.table("courses")
+            .select("*")
+            .eq("id", course_id)
+            .execute()
+        )
+
+        if not result.data:
+            raise HTTPException(status_code=404, detail="Course not found")
+
+        return result.data[0]
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# UPDATE a course
+@app.put("/api/courses/{course_id}")
+def update_course(course_id: int, course: CourseUpdate):
+    try:
+        updates = course.model_dump(exclude_unset=True)
+
+        if not updates:
+            raise HTTPException(status_code=400, detail="No update data provided")
+
+        result = (
+            supabase.table("courses")
+            .update(updates)
+            .eq("id", course_id)
+            .execute()
+        )
+
+        if not result.data:
+            raise HTTPException(status_code=404, detail="Course not found")
+
+        return result.data[0]
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# DELETE a course
+@app.delete("/api/courses/{course_id}")
+def delete_course(course_id: int):
+    try:
+        result = (
+            supabase.table("courses")
+            .delete()
+            .eq("id", course_id)
+            .execute()
+        )
+
+        if not result.data:
+            raise HTTPException(status_code=404, detail="Course not found")
+
+        return {
+            "message": "Course deleted successfully",
+            "course": result.data[0],
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# Serve the built React frontend when available
 FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
 
-# dist/ only exists after `npm run build`; in dev the Vite server serves the UI.
 if FRONTEND_DIR.is_dir():
     app.frontend("/", directory=FRONTEND_DIR)
