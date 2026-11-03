@@ -8,8 +8,7 @@ type Course = {
   description: string | null
   price: number
 }
-
-const API = "/api/courses"
+const API = "https://2110400-saintsnexus-backend.vercel.app/api/courses"
 
 export default function App() {
   const [courses, setCourses] = useState<Course[]>([])

@@ -3,6 +3,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from supabase import create_client, Client
 
@@ -18,6 +19,17 @@ if not SUPABASE_URL or not SUPABASE_KEY:
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI(title="Saints Nexus API")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://2110400-saintsnexus.vercel.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # Course request models
@@ -143,8 +155,6 @@ def delete_course(course_id: int):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# Serve the built React frontend when available
-FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend" / "dist"
 
-if FRONTEND_DIR.is_dir():
-    app.frontend("/", directory=FRONTEND_DIR)
+
+
