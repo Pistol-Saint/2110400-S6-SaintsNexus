@@ -12,7 +12,6 @@ import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
 import { apiRequest } from "../services/api";
 
-
 interface AdminUser {
   id: string;
   email: string;
@@ -42,7 +41,6 @@ interface UserSession {
 
 type AuditLog = Record<string, unknown>;
 
-
 function formatDate(value: unknown): string {
   if (typeof value !== "string") return "Unavailable";
 
@@ -52,7 +50,6 @@ function formatDate(value: unknown): string {
 
   return date.toLocaleString();
 }
-
 
 function isSessionActive(session: UserSession): boolean {
   if (session.revoked_at) return false;
@@ -729,6 +726,17 @@ export function AdminDashboard() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
 
+  // User search, filters, and pagination
+  const [userSearch, setUserSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Audit log filter
+  const [logFilter, setLogFilter] = useState("all");
+
+  const pageSize = 10;
+
 
   // Load users and audit logs
   const loadAdminData = useCallback(async () => {
@@ -907,6 +915,7 @@ export function AdminDashboard() {
   }
 
 
+  // Dashboard statistics
   const totalAdmins = users.filter(
     (item) => item.role === "admin"
   ).length;
@@ -914,6 +923,53 @@ export function AdminDashboard() {
   const totalBanned = users.filter(
     (item) => item.is_banned
   ).length;
+
+
+  // Filter registered users
+  const filteredUsers = users.filter((item) => {
+    const search = userSearch.trim().toLowerCase();
+
+    const matchesSearch =
+      !search ||
+      item.username.toLowerCase().includes(search) ||
+      item.email.toLowerCase().includes(search);
+
+    const matchesRole =
+      roleFilter === "all" || item.role === roleFilter;
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "banned" && item.is_banned) ||
+      (statusFilter === "active" && !item.is_banned);
+
+    return matchesSearch && matchesRole && matchesStatus;
+  });
+
+
+  // Pagination
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredUsers.length / pageSize)
+  );
+
+  const safePage = Math.min(currentPage, totalPages);
+
+  const paginatedUsers = filteredUsers.slice(
+    (safePage - 1) * pageSize,
+    safePage * pageSize
+  );
+
+
+  // Filter audit logs by action
+  const filteredLogs = logs.filter((log) => {
+    if (logFilter === "all") return true;
+
+    const action = String(
+      log.action ?? log.action_type ?? ""
+    ).toLowerCase();
+
+    return action.includes(logFilter.toLowerCase());
+  });
 
 
   return (
@@ -1000,6 +1056,50 @@ export function AdminDashboard() {
           </div>
 
 
+          {/* USER SEARCH AND FILTERS */}
+
+          <div className="admin-filter-bar">
+
+            <input
+              type="search"
+              placeholder="Search username or email..."
+              value={userSearch}
+              onChange={(event) => {
+                setUserSearch(event.target.value);
+                setCurrentPage(1);
+              }}
+              aria-label="Search users"
+            />
+
+            <select
+              value={roleFilter}
+              onChange={(event) => {
+                setRoleFilter(event.target.value);
+                setCurrentPage(1);
+              }}
+              aria-label="Filter users by role"
+            >
+              <option value="all">All Roles</option>
+              <option value="admin">Administrators</option>
+              <option value="user">Normal Users</option>
+            </select>
+
+            <select
+              value={statusFilter}
+              onChange={(event) => {
+                setStatusFilter(event.target.value);
+                setCurrentPage(1);
+              }}
+              aria-label="Filter users by account status"
+            >
+              <option value="all">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="banned">Banned</option>
+            </select>
+
+          </div>
+
+
           {loading ? (
             <p className="empty-state">
               Loading registered users...
@@ -1008,132 +1108,190 @@ export function AdminDashboard() {
             <p className="empty-state">
               No registered users found.
             </p>
+          ) : filteredUsers.length === 0 ? (
+            <p className="empty-state">
+              No users match your search or selected filters.
+            </p>
           ) : (
 
-            <div className="admin-table-wrapper">
+            <>
 
-              <table className="admin-table">
+              <div className="admin-table-wrapper">
 
-                <thead>
-                  <tr>
-                    <th>User</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
+                <table className="admin-table">
 
-
-                <tbody>
-
-                  {users.map((item) => {
-
-                    const isSelf = item.id === user?.id;
-                    const isSaving = savingId === item.id;
-
-                    return (
-                      <tr key={item.id}>
-
-                        <td>
-                          <strong>{item.username}</strong>
-
-                          {isSelf && (
-                            <small className="admin-self-label">
-                              (You)
-                            </small>
-                          )}
-                        </td>
+                  <thead>
+                    <tr>
+                      <th>User</th>
+                      <th>Email</th>
+                      <th>Role</th>
+                      <th>Status</th>
+                      <th>Joined</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
 
 
-                        <td>{item.email}</td>
+                  <tbody>
+
+                    {paginatedUsers.map((item) => {
+
+                      const isSelf = item.id === user?.id;
+                      const isSaving = savingId === item.id;
+
+                      return (
+                        <tr key={item.id}>
+
+                          <td>
+                            <strong>{item.username}</strong>
+
+                            {isSelf && (
+                              <small className="admin-self-label">
+                                (You)
+                              </small>
+                            )}
+                          </td>
 
 
-                        <td>
-                          <span className={`admin-role ${item.role}`}>
-                            {item.role}
-                          </span>
-                        </td>
+                          <td>{item.email}</td>
 
 
-                        <td>
-
-                          <span
-                            className={`admin-status ${
-                              item.is_banned ? "banned" : "active"
-                            }`}
-                          >
-                            {item.is_banned ? "Banned" : "Active"}
-                          </span>
-
-                          {item.is_banned && item.ban_reason && (
-                            <small className="admin-ban-reason">
-                              Reason: {item.ban_reason}
-                            </small>
-                          )}
-
-                        </td>
+                          <td>
+                            <span className={`admin-role ${item.role}`}>
+                              {item.role}
+                            </span>
+                          </td>
 
 
-                        <td>{formatDate(item.created_at)}</td>
+                          <td>
 
-
-                        <td>
-
-                          <div className="admin-actions">
-
-                            <button
-                              type="button"
-                              className="secondary-button"
-                              disabled={isSelf || isSaving}
-                              onClick={() => void changeRole(item)}
+                            <span
+                              className={`admin-status ${
+                                item.is_banned ? "banned" : "active"
+                              }`}
                             >
-                              {isSaving
-                                ? "Please wait..."
-                                : item.role === "admin"
-                                  ? "Make User"
-                                  : "Make Admin"}
-                            </button>
+                              {item.is_banned ? "Banned" : "Active"}
+                            </span>
+
+                            {item.is_banned && item.ban_reason && (
+                              <small className="admin-ban-reason">
+                                Reason: {item.ban_reason}
+                              </small>
+                            )}
+
+                          </td>
 
 
-                            {item.is_banned ? (
+                          <td>{formatDate(item.created_at)}</td>
+
+
+                          <td>
+
+                            <div className="admin-actions">
 
                               <button
                                 type="button"
                                 className="secondary-button"
-                                disabled={isSaving}
-                                onClick={() => void unbanUser(item)}
-                              >
-                                Unban
-                              </button>
-
-                            ) : (
-
-                              <button
-                                type="button"
-                                className="delete-button"
                                 disabled={isSelf || isSaving}
-                                onClick={() => void banUser(item)}
+                                onClick={() => void changeRole(item)}
                               >
-                                Ban
+                                {isSaving
+                                  ? "Please wait..."
+                                  : item.role === "admin"
+                                    ? "Make User"
+                                    : "Make Admin"}
                               </button>
 
-                            )}
 
-                          </div>
+                              {item.is_banned ? (
 
-                        </td>
+                                <button
+                                  type="button"
+                                  className="secondary-button"
+                                  disabled={isSaving}
+                                  onClick={() => void unbanUser(item)}
+                                >
+                                  Unban
+                                </button>
 
-                      </tr>
-                    );
-                  })}
+                              ) : (
 
-                </tbody>
+                                <button
+                                  type="button"
+                                  className="delete-button"
+                                  disabled={isSelf || isSaving}
+                                  onClick={() => void banUser(item)}
+                                >
+                                  Ban
+                                </button>
 
-              </table>
+                              )}
 
-            </div>
+                            </div>
+
+                          </td>
+
+                        </tr>
+                      );
+                    })}
+
+                  </tbody>
+
+                </table>
+
+              </div>
+
+
+              {/* USER PAGINATION */}
+
+              <div className="admin-pagination">
+
+                <span>
+                  Showing{" "}
+                  {filteredUsers.length === 0
+                    ? 0
+                    : (safePage - 1) * pageSize + 1}
+                  {" – "}
+                  {Math.min(safePage * pageSize, filteredUsers.length)}
+                  {" of "}
+                  {filteredUsers.length} users
+                </span>
+
+                <div>
+
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    disabled={safePage <= 1}
+                    onClick={() =>
+                      setCurrentPage((page) => Math.max(1, page - 1))
+                    }
+                  >
+                    Previous
+                  </button>
+
+                  <span>
+                    Page {safePage} of {totalPages}
+                  </span>
+
+                  <button
+                    type="button"
+                    className="secondary-button"
+                    disabled={safePage >= totalPages}
+                    onClick={() =>
+                      setCurrentPage((page) =>
+                        Math.min(totalPages, page + 1)
+                      )
+                    }
+                  >
+                    Next
+                  </button>
+
+                </div>
+
+              </div>
+
+            </>
           )}
 
         </section>
@@ -1154,8 +1312,26 @@ export function AdminDashboard() {
             </div>
 
             <span className="course-count">
-              {logs.length} RECORDS
+              {filteredLogs.length} RECORDS
             </span>
+
+          </div>
+
+
+          {/* AUDIT LOG FILTER */}
+
+          <div className="admin-filter-bar">
+
+            <select
+              value={logFilter}
+              onChange={(event) => setLogFilter(event.target.value)}
+              aria-label="Filter audit logs by action"
+            >
+              <option value="all">All Administrative Activity</option>
+              <option value="user_banned">User Banned</option>
+              <option value="user_unbanned">User Unbanned</option>
+              <option value="user_role_changed">Role Changed</option>
+            </select>
 
           </div>
 
@@ -1166,17 +1342,17 @@ export function AdminDashboard() {
               Loading audit logs...
             </p>
 
-          ) : logs.length === 0 ? (
+          ) : filteredLogs.length === 0 ? (
 
             <p className="empty-state">
-              No audit log records found.
+              No audit records match this filter.
             </p>
 
           ) : (
 
             <div className="audit-log-list">
 
-              {logs.map((log, index) => (
+              {filteredLogs.map((log, index) => (
 
                 <article
                   className="audit-log-card"
