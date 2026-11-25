@@ -1,77 +1,60 @@
 # Product Requirements Document (PRD) — Saints Nexus
 
-## 1. Project overview
+## 1. Project Overview
 
-Saints Nexus is a web-based e-learning platform developed for the IUB CSE309 Web Applications course. It allows visitors and registered learners to explore a course catalogue. Registered users can manage their accounts, while administrators can manage courses and moderate user accounts.
+Saints Nexus is a web-based e-learning platform designed to help students access online courses and learning materials. Administrators can manage courses and their associated lessons through a centralized system.
 
-## 2. Problem and goals
+## 2. Project Goals
 
-Learners need a centralized interface to discover available courses and maintain an account. Platform operators need protected tools to maintain course information, manage account roles, respond to misuse, and review administrative activity.
+- Provide students with an organized platform for browsing courses and learning materials.
+- Allow students to view course details and lesson information.
+- Enable administrators to create, view, update, and delete courses.
+- Develop a maintainable web application using React, TypeScript, FastAPI, and Python.
 
-Project goals:
-- Provide a responsive, understandable course catalogue.
-- Support account registration, authentication, and account self-service.
-- Restrict privileged operations to administrators.
-- Provide basic administrative account controls and audit history.
-- Deploy the frontend and API for remote demonstration.
+## 3. Target Users
 
-## 3. Target users
+- **Students:** Browse available courses and access course information and learning materials.
+- **Administrators:** Manage courses and their associated learning content.
 
-- **Visitor:** Can access public course information and account registration/login.
-- **Learner (user):** Can browse courses, view a dashboard, manage profile/password, and inspect/revoke other active sessions.
-- **Administrator:** Has learner capabilities plus course CRUD, user listing, role management, ban/unban, dashboard counts, and audit-log access.
+## 4. Core Features
 
-## 4. Implemented product scope
+### MVP — Midterm
 
-### 4.1 Course catalogue and management
-- Display courses retrieved from the API/database.
-- View an individual course.
-- Allow administrators to create, update, and delete courses.
-- Validate course title and non-negative price.
+- Display a list of available courses.
+- View individual course details.
+- Provide REST API endpoints for course management.
+- Store and retrieve course information from a database.
+- Run the frontend and backend locally.
 
-### 4.2 Authentication and account management
-- Register accounts and authenticate using email/password.
-- Hash passwords with Argon2 through pwdlib.
-- Issue 15-minute JWT access tokens.
-- Issue seven-day opaque refresh tokens, storing only their SHA-256 hashes in the database.
-- Rotate refresh tokens when a refresh succeeds.
-- Revoke sessions on logout, explicit session revocation, password change (other sessions), and account ban.
-- Allow a user to update their username and change their password after supplying the current password.
+### Beta — Final
 
-### 4.3 Administration
-- Display counts for all users, administrators, normal users, and banned accounts.
-- List registered users.
-- Change another user's role between user and admin.
-- Ban a user with a required reason and unban a banned user.
-- Review the latest administrative audit records.
-- Restrict course write operations to administrators.
+- User registration and login.
+- Role-Based Access Control (RBAC) for students and administrators.
+- Student and administrator dashboards.
+- Course enrollment and learning progress tracking.
+- Deployment of the application.
 
-## 5. Out of scope / known gaps
+## 5. User Stories
 
-The current inspected implementation does not include:
-- Shared group/team creation, membership, or granular group permissions.
-- Login attempt throttling or temporary account/IP lockout.
-- CSV export.
-- Search, filters, and pagination in the admin user table.
-- A dedicated failed-login security analytics dashboard.
-- HttpOnly-cookie storage for refresh tokens.
+- As a student, I want to browse available courses so that I can find relevant learning materials.
+- As a student, I want to view course details so that I can understand what a course offers.
+- As an administrator, I want to manage courses so that course information remains up to date.
+- As a student, I want to track my learning progress so that I can monitor my progress through a course.
 
-These are known gaps against the broader final-assessment checklist and must not be represented as completed product capabilities.
+## 6. Success Metrics
 
-## 6. Success criteria
+- Students can browse and view course information successfully.
+- Course management operations work correctly through the backend API.
+- Frontend and backend communicate successfully.
+- Authentication and role-based permissions work correctly in the Beta release.
 
-- Public course listing and course details respond through the deployed API.
-- Registration/login and protected routes behave as intended.
-- Invalid or expired access tokens are rejected; refresh-token rotation and session revocation are enforced server-side.
-- Non-admin users cannot perform administrator-only course or user-management operations.
-- Administrators can change roles and ban/unban other accounts.
-- Profile, password, and session-management workflows work.
-- Automated tests and frontend production build pass.
-- Frontend and backend are accessible through the published Vercel URLs.
+## 7. Risks and Constraints
 
-## 7. Constraints and risks
+- Limited development time may restrict the number of completed features.
+- Database and API integration issues may affect development.
+- Authentication and authorization must be implemented carefully.
+- The project must remain within the required React + TypeScript and FastAPI + Python technology stack.
 
-- Limited course-project schedule.
-- Supabase credentials and JWT/password secrets must remain private.
-- Browser sessionStorage is accessible to scripts executing in the page; an HttpOnly refresh-cookie design would provide stronger protection against token theft through XSS.
-- Some broader security and collaboration requirements remain unimplemented and should be identified as future work.
+## 8. Project Scope
+
+The MVP focuses on core course browsing, course information, and backend course management. The Beta release expands the platform with authentication, role-based access, dashboards, enrollment, progress tracking, and deployment.
