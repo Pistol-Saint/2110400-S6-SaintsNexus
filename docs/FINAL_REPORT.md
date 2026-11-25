@@ -10,11 +10,10 @@
 | Course | CSE309 — Web Applications |
 | Section | 6 |
 | Institution | Independent University, Bangladesh |
-| Student name | [Enter your name exactly as registered] |
-| Student ID | [Enter your student ID] |
-| Group members | [Enter names and IDs, or state individual project if applicable] |
-| Faculty | [Enter faculty name] |
-| Submission date | [Enter date] |
+| Student name | Md. Redwanur Rahman |
+| Student ID | 2110400 |
+| Faculty | Sayef Reyadh |
+| Submission date | 28 November 2026 |
 | Repository | https://github.com/Pistol-Saint/2110400-S6-SaintsNexus |
 | Live frontend | https://2110400-saintsnexus-frontend.vercel.app/ |
 | Live API | https://2110400-saintsnexus-backend.vercel.app/ |
