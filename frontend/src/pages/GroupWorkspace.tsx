@@ -110,7 +110,7 @@ export default function GroupWorkspace() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (!canCreate && !canUpdate) return;
+    if (editingId ? !canUpdate : !canCreate) return;
 
     setSaving(true);
     setError("");
@@ -283,7 +283,7 @@ export default function GroupWorkspace() {
               </div>
             </section>
 
-            {(canCreate || canUpdate) && (
+            {(editingId ? canUpdate : canCreate) && (
               <section className="group-panel">
                 <span className="eyebrow">RESOURCE MANAGEMENT</span>
                 <h2>{editingId ? "Update Resource" : "Create a Resource"}</h2>
