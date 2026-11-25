@@ -1,4 +1,4 @@
-# Final Submission Checklist — Saints Nexus
+# Final Submission Checklist â€” Saints Nexus
 
 Use this checklist before submitting the project. Mark an item complete only after personally verifying it against the deployed application or final commit.
 
@@ -19,7 +19,7 @@ Use this checklist before submitting the project. Mark an item complete only aft
 - [ ] Limitations section retained; do not claim missing features are implemented.
 
 ## C. Demo accounts
-The faculty brief requires multiple accounts/roles. Prepare the required accounts in the deployed application and verify each one. Do not publish passwords in GitHub or in a public report.
+The faculty evidence requirements mandate two administrator accounts and three normal-user accounts. Prepare and verify all five accounts in the deployed application. Do not publish passwords in GitHub or in the public repository. Include credentials only in the final PDF and only as permitted by the faculty submission instructions.
 - [ ] Admin account 1 tested.
 - [ ] Admin account 2 tested.
 - [ ] Normal user account 1 tested.
@@ -57,30 +57,30 @@ git diff --check
 
 The following is the 21-item evidence capture list from the assessment preparation. Capture actual screenshots only when the feature/behavior exists. If a listed feature is not implemented, do not fabricate a screenshot; mark it as a gap and ask the faculty how to document it.
 
-1. [ ] S1 — Signup/login with validation feedback.
-2. [ ] S2 — Logged-in learner dashboard and course catalogue.
-3. [ ] S3 — Profile page and incorrect current-password rejection.
-4. [ ] S4 — Session list and revoke action.
-5. [ ] S5 — Group members and permissions (not present in inspected implementation).
-6. [ ] S6 — RBAC-denied action and 403 response.
-7. [ ] S7 — Expired access token rejected with 401.
-8. [ ] S8 — Refresh request and newly issued access token (not an HttpOnly cookie in current implementation).
-9. [ ] S9 — Banned user rejected on next authenticated request.
-10. [ ] S10 — Admin overview statistics.
-11. [ ] S11 — User list with search, filters, and pagination (not present in inspected implementation).
-12. [ ] S12 — User detail, sessions, and recent activity (only list/session/audit views are implemented; no dedicated detail view).
-13. [ ] S13 — Ban reason and resulting banned state.
-14. [ ] S14 — Group/content moderation and bulk action (group/bulk moderation not present; course CRUD is present).
-15. [ ] S15 — Filtered activity log (audit list exists; filtering is not present).
-16. [ ] S16 — Security view with failed login analysis (not present as a dedicated dashboard).
-17. [ ] S17 — CSV export (not present in inspected implementation).
-18. [ ] S18 — Vercel frontend production deployment.
-19. [ ] S19 — Vercel backend deployment/environment variable names with values hidden.
-20. [ ] S20 — Live API Swagger documentation.
-21. [ ] S21 — Pytest results.
+1. [ ] S1 â€” Signup/login with validation feedback.
+2. [ ] S2 â€” Logged-in learner dashboard and course catalogue.
+3. [ ] S3 â€” Profile page and incorrect current-password rejection.
+4. [ ] S4 â€” Session list and revoke action.
+5. [ ] S5 â€” Group members and permissions (not present in inspected implementation).
+6. [ ] S6 â€” RBAC-denied action and 403 response.
+7. [ ] S7 â€” Expired access token rejected with 401.
+8. [ ] S8 â€” Refresh request and newly issued access token (not an HttpOnly cookie in current implementation).
+9. [ ] S9 â€” Banned user rejected on next authenticated request.
+10. [ ] S10 â€” Admin overview statistics.
+11. [ ] S11 â€” User list with client-side search, role/status filters, and pagination over loaded users.
+12. [ ] S12 â€” User detail, sessions, and recent activity (only list/session/audit views are implemented; no dedicated detail view).
+13. [ ] S13 â€” Ban reason and resulting banned state.
+14. [ ] S14 â€” Group/content moderation and bulk action (group/bulk moderation not present; course CRUD is present).
+15. [ ] S15 â€” Filtered activity log using implemented client-side action filters.
+16. [ ] S16 â€” Security view with failed login analysis (not present as a dedicated dashboard).
+17. [ ] S17 â€” CSV export (not present in inspected implementation).
+18. [ ] S18 â€” Vercel frontend production deployment.
+19. [ ] S19 â€” Vercel backend deployment/environment variable names with values hidden.
+20. [ ] S20 â€” Live API Swagger documentation.
+21. [ ] S21 â€” Pytest results.
 
 ## G. Video and submission
-- [ ] Record a 5–8 minute demonstration covering the implemented learner, course, profile/session, and administrator workflows.
+- [ ] Record a 5â€“8 minute demonstration covering the implemented learner, course, profile/session, and administrator workflows.
 - [ ] Check audio, browser zoom, and deployed URLs before recording.
 - [ ] Ensure no passwords, tokens, private keys, or environment values appear.
 - [ ] Complete the faculty submission form: https://forms.gle/USnKmgZcmZMuFCFP6

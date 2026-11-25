@@ -1,18 +1,23 @@
-# Saints Nexus — Final Project Report
+# Saints Nexus - Final Project Report
 
-> **Submission draft:** Complete the student/course metadata and attach the required screenshots and demo recording before submission. This report describes the code inspected on the `main` branch; it does not claim that unimplemented assessment requirements are complete.
+> **Final project report:** Saints Nexus - E-Learning Website. This report describes the code inspected on the `main` branch; it does not claim that unimplemented assessment requirements are complete.
 
 ## Cover information
 
 | Field | Value |
 |---|---|
-| Project | Saints Nexus — E-Learning Website |
-| Course | CSE309 — Web Applications |
+| Project | Saints Nexus - E-Learning Website |
+| Course | CSE309 - Web Applications |
 | Section | 6 |
 | Institution | Independent University, Bangladesh |
 | Student name | Md. Redwanur Rahman |
 | Student ID | 2110400 |
+<<<<<<< HEAD
 | Faculty | Sayef Reyadh |
+=======
+| Group members | Individual Project |
+| Faculty | Sayef Reyadh, Adjunct Lecturer, Department of Computer Science & Engineering, Independent University, Bangladesh |
+>>>>>>> 16e479f (docs: finalize Saints Nexus submission report)
 | Submission date | 28 November 2026 |
 | Repository | https://github.com/Pistol-Saint/2110400-S6-SaintsNexus |
 | Live frontend | https://2110400-saintsnexus-frontend.vercel.app/ |
@@ -69,7 +74,7 @@ Objectives:
 - Change another user's role between user and admin.
 - Ban users with a required reason and unban users.
 - Ban action revokes the target user's active sessions.
-- Review recent administrative audit logs.
+- Review recent administrative audit logs with client-side action filtering.
 - Backend authorization protects privileged endpoints.
 
 ## 4. System architecture and technology
@@ -166,22 +171,25 @@ Secrets are configured through environment variables and must not be included in
 
 ## 9. GitHub workflow and project management
 
-The repository history includes feature branches and merged pull requests. The inspected recent history includes:
-- PR #1: Saints Nexus documentation.
-- PR #4/#5: Course CRUD implementation.
-- PR #6: Final-assessment authentication and admin features.
-- Commit `0feaf273`: Vercel backend import-path fix.
+The project was developed using GitHub branches and pull requests. The following merged pull requests were identified in the repository history:
 
-See the repository's Pull Requests and commit history for full metadata:
+| Pull request | Work documented | Outcome |
+|---|---|---|
+| #1 | Saints Nexus documentation | Merged |
+| #4/#5 | Course CRUD implementation | Merged |
+| #6 | Final-assessment authentication and admin features | Merged |
+
+The repository's pull-request history is available at:
 https://github.com/Pistol-Saint/2110400-S6-SaintsNexus/pulls
 
+No additional issue-to-PR mapping is claimed here unless independently verified.
 ## 10. Known gaps and future improvements
 
 The following broader assessment requirements were not found in the inspected main-branch source and should be treated as incomplete:
 1. Shared groups/teams, membership management, and granular permissions.
 2. Login brute-force protection and temporary lockout.
 3. CSV export for users, records, or activity.
-4. Admin user search, filtering, and pagination.
+4. Server-side user search, filtering, and pagination. The current frontend implements client-side search, role/status filters, and pagination over loaded users.
 5. Dedicated failed-login analytics/security dashboard.
 6. HttpOnly-cookie refresh-token storage.
 7. Expanded automated tests for token expiry/tampering, refresh-token reuse, ownership boundaries, banned-user flows, and comprehensive RBAC.
@@ -203,10 +211,10 @@ Saints Nexus demonstrates a deployed full-stack web application with course mana
 
 **AI assistance disclosure:** ChatGPT was used as an AI-assisted development and documentation aid for troubleshooting, code review/explanation, planning, and drafting/editing project documentation. The student must review all generated suggestions, verify the final code and report, and be prepared to explain the implementation. Amend this statement to accurately reflect the actual assistance used and the faculty's required disclosure format.
 
-## Appendix A — Evidence
+## Appendix A - Evidence
 
 Attach the screenshots listed in `docs/FINAL_SUBMISSION_CHECKLIST.md`. Each screenshot should show the relevant deployed page or test output, with secrets and personal credentials hidden.
 
-## Appendix B — Demonstration
+## Appendix B - Demonstration
 
-Prepare a concise 5–8 minute walkthrough covering registration/login, course browsing and administration, profile/session management, administrator controls, and the deployed application/API. Use only test accounts deliberately prepared for assessment. Do not include passwords, access tokens, refresh tokens, or secret environment values in the recording.
+Prepare a concise 5â€“8 minute walkthrough covering registration/login, course browsing and administration, profile/session management, administrator controls, and the deployed application/API. Use only test accounts deliberately prepared for assessment. Do not include passwords, access tokens, refresh tokens, or secret environment values in the recording.
