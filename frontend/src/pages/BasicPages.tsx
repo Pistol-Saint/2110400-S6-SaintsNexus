@@ -88,6 +88,10 @@ export function Dashboard() {
             <h2>My Profile</h2>
             <p>View and manage your account information.</p>
           </Link>
+          <Link to="/groups/project-avengers" className="dashboard-card">
+            <h2>PROJECT AVENGERS</h2>
+            <p>Access your team workspace, shared resources, and project tasks.</p>
+          </Link>
 
           {user?.role === "admin" && (
             <Link to="/admin" className="dashboard-card">

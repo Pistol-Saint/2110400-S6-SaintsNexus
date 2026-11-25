@@ -9,6 +9,7 @@ import { apiRequest } from "./services/api";
 
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import GroupWorkspace from "./pages/GroupWorkspace";
 import {
   Dashboard,
   Profile,
@@ -312,6 +313,7 @@ export default function App() {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/groups/project-avengers" element={<GroupWorkspace />} />
       </Route>
 
       <Route element={<ProtectedRoute adminOnly />}>
