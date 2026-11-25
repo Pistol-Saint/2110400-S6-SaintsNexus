@@ -125,7 +125,6 @@ The project verification recorded for the final-assessment implementation was **
 - [Technical Design Document](docs/TDD.md)
 - [Final Project Report](docs/FINAL_REPORT.md)
 - [Submission and Evidence Checklist](docs/FINAL_SUBMISSION_CHECKLIST.md)
-- [Demo and Viva Script](docs/DEMO_SCRIPT.md)
 
 ## Academic integrity and tool disclosure
 
