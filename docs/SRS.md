@@ -3,76 +3,93 @@
 ## 1. Introduction
 
 ### 1.1 Purpose
-
-This document defines the functional and non-functional requirements of Saints Nexus, a web-based e-learning platform for browsing courses and accessing learning materials.
+This specification describes the implemented functional and non-functional requirements of Saints Nexus, an e-learning course catalogue with account and administrator features.
 
 ### 1.2 Scope
+The system consists of a React/TypeScript web frontend, a FastAPI/Python REST API, and a Supabase PostgreSQL database. It supports course browsing, account authentication, profile/session management, and basic administrator controls.
 
-Saints Nexus allows students to explore available courses and allows administrators to manage course information. The MVP focuses on core course functionality, while the Beta release introduces authentication, role-based access, dashboards, enrollment, and progress tracking.
+### 1.3 Technology
+- Frontend: React, TypeScript, Vite, React Router
+- Backend: Python, FastAPI
+- Database: Supabase PostgreSQL
+- Authentication: PyJWT access tokens and opaque refresh tokens
+- Password hashing: pwdlib Argon2
+- Deployment: Vercel
+- Testing: pytest and FastAPI TestClient
 
-### 1.3 Technology Stack
+## 2. User roles
 
-- **Frontend:** React + TypeScript
-- **Backend:** FastAPI + Python
-- **Database:** To be confirmed based on the project's actual database configuration.
-- **API:** RESTful HTTP endpoints
+- **Visitor:** Browse public course information and register/login.
+- **User:** Access authenticated learner pages, update profile, change password, view/revoke sessions.
+- **Admin:** Access user-management and audit-log endpoints and perform course write operations.
 
-## 2. User Roles
+Authorization is enforced by backend dependencies, not only by hiding frontend navigation.
 
-- **Student:** Can browse available courses and view course details and learning materials.
-- **Administrator:** Can manage course information and associated learning content.
+## 3. Functional requirements
 
-In the Beta release, access to restricted features must depend on the authenticated user's role.
+### 3.1 Course catalogue
+- FR-01: The system shall return the course list.
+- FR-02: The system shall return a course by ID.
+- FR-03: The system shall return 404 when a requested course does not exist.
+- FR-04: An administrator shall be able to create a course.
+- FR-05: An administrator shall be able to update a course.
+- FR-06: An administrator shall be able to delete a course.
+- FR-07: Course input shall validate a non-empty title and non-negative price.
 
-## 3. Functional Requirements
+### 3.2 Authentication and sessions
+- FR-08: A visitor shall be able to register with email, username, and password.
+- FR-09: A registered user shall be able to log in with email and password.
+- FR-10: The system shall hash passwords before storage.
+- FR-11: The API shall issue a signed access token with a 15-minute lifetime.
+- FR-12: The API shall issue a refresh token with a seven-day lifetime.
+- FR-13: The system shall rotate refresh tokens on successful refresh.
+- FR-14: The system shall reject missing, invalid, expired, or revoked access sessions.
+- FR-15: A user shall be able to log out and revoke a refresh-token session.
+- FR-16: A user shall be able to list their sessions and revoke another session.
+- FR-17: A banned user shall be prevented from authenticated access.
 
-### 3.1 Course Browsing — MVP
+### 3.3 Profile
+- FR-18: An authenticated user shall be able to view profile details.
+- FR-19: An authenticated user shall be able to update their username subject to length and uniqueness validation.
+- FR-20: A user shall be required to provide the current password to change it.
+- FR-21: A successful password change shall revoke other active sessions.
 
-- FR-01: The system shall display a list of available courses.
-- FR-02: The system shall allow users to view the details of an individual course.
-- FR-03: The system shall retrieve course information through the backend API.
-- FR-04: The system shall display appropriate feedback when course information cannot be retrieved.
+### 3.4 Administration
+- FR-22: An administrator shall be able to list registered users without exposing password hashes.
+- FR-23: An administrator shall be able to change another user's role between user and admin.
+- FR-24: An administrator shall be able to ban another user with a non-empty reason.
+- FR-25: An administrator shall be able to unban a user.
+- FR-26: Banning a user shall revoke that user's active sessions.
+- FR-27: An administrator shall be able to view a bounded number of audit-log records.
+- FR-28: The admin dashboard shall display user, administrator, normal-user, and banned-account counts.
 
-### 3.2 Course Management — MVP
+## 4. Non-functional requirements
 
-- FR-05: The backend shall support creating a course.
-- FR-06: The backend shall support retrieving course information.
-- FR-07: The backend shall support updating an existing course.
-- FR-08: The backend shall support deleting a course.
-- FR-09: The system shall validate course data before saving changes.
+- NFR-01 Security: Protected API operations shall require valid authentication and appropriate role authorization.
+- NFR-02 Password storage: Passwords shall be stored as Argon2 password hashes, not plaintext.
+- NFR-03 Token security: JWTs shall be signed and validated with required claims, issuer, and expiry.
+- NFR-04 Input validation: API request data shall be validated using Pydantic schemas.
+- NFR-05 Maintainability: Frontend, backend routers, schemas, services, and security helpers shall be separated into modules.
+- NFR-06 Reliability: Invalid requests shall return meaningful HTTP error responses.
+- NFR-07 Compatibility: The application shall support modern browsers and standard HTTP APIs.
+- NFR-08 Configuration: Secrets shall be supplied through environment variables and excluded from source control.
 
-### 3.3 Authentication and Authorization — Beta
+## 5. External interfaces
 
-- FR-10: The system shall allow users to register and log in.
-- FR-11: The system shall distinguish between student and administrator roles.
-- FR-12: The system shall restrict administrative operations to authorized administrators.
-- FR-13: The system shall provide role-appropriate dashboards.
+- Web interface: React single-page application.
+- REST API: JSON over HTTP/HTTPS, documented by FastAPI Swagger UI at `/docs`.
+- Database: Supabase client connection to PostgreSQL-backed tables.
 
-### 3.4 Enrollment and Progress — Beta
+## 6. Data entities
 
-- FR-14: Students shall be able to enroll in available courses.
-- FR-15: The system shall associate enrollments with the relevant student and course.
-- FR-16: The system shall support tracking student learning progress.
+The inspected application uses the following database entities:
+- **courses:** course ID, creation timestamp, title, description, price.
+- **users:** user ID, email, username, password hash, role, ban state/reason, timestamps.
+- **sessions:** session ID, user ID, refresh-token hash, expiry, revocation timestamp, last activity, IP address.
+- **audit_logs:** user reference, action, structured details, IP address, timestamp.
 
-## 4. Non-Functional Requirements
+Exact SQL constraints and indexes should be verified against the deployed Supabase schema before including a database DDL appendix.
 
-- NFR-01 — Usability: The interface should be understandable and easy to navigate.
-- NFR-02 — Performance: Course information should load within a reasonable response time under normal local development conditions.
-- NFR-03 — Security: Inputs must be validated, and restricted operations must be protected.
-- NFR-04 — Maintainability: Frontend and backend code should be organized into understandable modules.
-- NFR-05 — Reliability: The system should handle invalid requests and API errors without crashing.
-- NFR-06 — Compatibility: The application should support modern web browsers.
+## 7. Known limitations
 
-## 5. External Interface Requirements
-
-### 5.1 User Interface
-
-The frontend shall provide pages or components for course browsing and course details. Administrative interfaces will support course management as the project develops.
-
-### 5.2 Software Interface
-
-The React + TypeScript frontend shall communicate with the FastAPI + Python backend through HTTP requests to REST API endpoints.
-
-### 5.3 API Interface
-
-The API shall return appropriate HTTP status codes and structured responses. Exact endpoint paths and request/response formats shall be documented in the Technical Design Document
+The current implementation does not provide group/team permissions, brute-force lockout, CSV export, admin search/filter/pagination, or a dedicated failed-login analytics view. Refresh tokens are returned in JSON and held in browser sessionStorage rather than an HttpOnly cookie. These are limitations and future improvements, not implemented requirements.
