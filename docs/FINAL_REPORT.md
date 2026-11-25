@@ -12,12 +12,8 @@
 | Institution | Independent University, Bangladesh |
 | Student name | Md. Redwanur Rahman |
 | Student ID | 2110400 |
-<<<<<<< HEAD
-| Faculty | Sayef Reyadh |
-=======
 | Group members | Individual Project |
 | Faculty | Sayef Reyadh, Adjunct Lecturer, Department of Computer Science & Engineering, Independent University, Bangladesh |
->>>>>>> 16e479f (docs: finalize Saints Nexus submission report)
 | Submission date | 28 November 2026 |
 | Repository | https://github.com/Pistol-Saint/2110400-S6-SaintsNexus |
 | Live frontend | https://2110400-saintsnexus-frontend.vercel.app/ |
@@ -217,4 +213,4 @@ Attach the screenshots listed in `docs/FINAL_SUBMISSION_CHECKLIST.md`. Each scre
 
 ## Appendix B - Demonstration
 
-Prepare a concise 5â€“8 minute walkthrough covering registration/login, course browsing and administration, profile/session management, administrator controls, and the deployed application/API. Use only test accounts deliberately prepared for assessment. Do not include passwords, access tokens, refresh tokens, or secret environment values in the recording.
+Prepare a concise 5-8 minute walkthrough covering registration/login, course browsing and administration, profile/session management, administrator controls, and the deployed application/API. Use only test accounts deliberately prepared for assessment. Do not include passwords, access tokens, refresh tokens, or secret environment values in the recording.
