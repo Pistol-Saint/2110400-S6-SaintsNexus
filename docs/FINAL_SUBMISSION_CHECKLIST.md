@@ -1,4 +1,4 @@
-# Final Submission Checklist â€” Saints Nexus
+# Final Submission Checklist of Saints Nexus
 
 Use this checklist before submitting the project. Mark an item complete only after personally verifying it against the deployed application or final commit.
 
