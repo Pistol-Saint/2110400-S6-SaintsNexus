@@ -1,0 +1,263 @@
+﻿.group-workspace {
+  padding-bottom: 4rem;
+}
+
+.group-hero {
+  padding: 3rem 0 2rem;
+}
+
+.group-hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  margin: 0.5rem 0;
+}
+
+.group-hero h1 span {
+  color: var(--primary-color, #8b5cf6);
+}
+
+.group-panel {
+  background: var(--card-background, #ffffff);
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.group-panel h2 {
+  margin-top: 0.4rem;
+}
+
+.group-permission-list,
+.group-member-permissions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.group-permission,
+.group-member-permissions span {
+  padding: 0.4rem 0.65rem;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  background: #f3f4f6;
+}
+
+.group-permission.allowed {
+  color: #166534;
+  background: #dcfce7;
+}
+
+.group-permission.denied {
+  color: #991b1b;
+  background: #fee2e2;
+}
+
+.group-member-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1rem;
+}
+
+.group-member-card,
+.group-resource-card {
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 12px;
+  padding: 1.1rem;
+  min-width: 0;
+}
+
+.group-member-card h3,
+.group-resource-card h3 {
+  margin: 0 0 0.5rem;
+  overflow-wrap: anywhere;
+}
+
+.group-member-role,
+.group-resource-status {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6d28d9;
+  background: #ede9fe;
+  border-radius: 20px;
+  padding: 0.3rem 0.65rem;
+}
+
+.group-member-permissions {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.group-resource-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.group-resource-form label {
+  display: grid;
+  gap: 0.5rem;
+  font-weight: 600;
+}
+
+.group-resource-form input,
+.group-resource-form textarea,
+.group-assignment-control select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid var(--border-color, #d1d5db);
+  border-radius: 8px;
+  font: inherit;
+}
+
+.group-form-actions,
+.group-resource-actions,
+.group-assignment-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.group-resource-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.group-resource-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.group-resource-card > p {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.group-resource-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 1.5rem;
+  color: #6b7280;
+  font-size: 0.85rem;
+  margin: 1rem 0;
+}
+
+.group-assignment-control select {
+  min-width: 180px;
+  flex: 1;
+}
+
+@media (max-width: 600px) {
+  .group-panel {
+    padding: 1rem;
+  }
+
+  .group-assignment-control {
+    width: 100%;
+  }
+
+  .group-assignment-control select {
+    min-width: 0;
+  }
+}
+
+/* =========================================================
+   PROJECT AVENGERS — READABILITY FIX
+   Keep the existing layout; correct low-contrast text.
+   ========================================================= */
+
+.group-workspace,
+.group-workspace-page,
+.group-page,
+.workspace-page {
+  color: #1f2937 !important;
+}
+
+.group-workspace *,
+.group-workspace-page *,
+.group-page *,
+.workspace-page * {
+  color: #1f2937;
+}
+
+/* Main content cards */
+.group-workspace .overview-card,
+.group-workspace .members-section,
+.group-workspace .resources-section,
+.group-workspace .member-card,
+.group-workspace .resource-card,
+.group-workspace-page .overview-card,
+.group-workspace-page .members-section,
+.group-workspace-page .resources-section,
+.group-workspace-page .member-card,
+.group-workspace-page .resource-card {
+  background: #ffffff !important;
+  color: #1f2937 !important;
+  border-color: #d1d5db !important;
+}
+
+/* Headings and ordinary text */
+.group-workspace h1,
+.group-workspace h2,
+.group-workspace h3,
+.group-workspace p,
+.group-workspace label,
+.group-workspace strong,
+.group-workspace span,
+.group-workspace-page h1,
+.group-workspace-page h2,
+.group-workspace-page h3,
+.group-workspace-page p,
+.group-workspace-page label,
+.group-workspace-page strong,
+.group-workspace-page span {
+  color: #1f2937 !important;
+}
+
+/* Form controls */
+.group-workspace input,
+.group-workspace textarea,
+.group-workspace select,
+.group-workspace-page input,
+.group-workspace-page textarea,
+.group-workspace-page select {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid #9ca3af !important;
+}
+
+.group-workspace input::placeholder,
+.group-workspace textarea::placeholder,
+.group-workspace-page input::placeholder,
+.group-workspace-page textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1;
+}
+
+/* Permission indicators */
+.group-workspace .permission-badge,
+.group-workspace .permission-chip,
+.group-workspace-page .permission-badge,
+.group-workspace-page .permission-chip {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border: 1px solid #86efac !important;
+}
+
+/* Keep buttons readable */
+.group-workspace button,
+.group-workspace-page button {
+  color: #ffffff !important;
+}
+
+.group-workspace button:disabled,
+.group-workspace-page button:disabled {
+  color: #6b7280 !important;
+  opacity: 0.65;
+}

@@ -26,7 +26,7 @@ Saints Nexus is a web-based e-learning platform developed with React and TypeScr
 
 The frontend and backend are deployed through Vercel. The inspected repository contains nine backend automated tests. The project was previously verified with nine passing tests and a successful TypeScript/Vite production build. The deployed health endpoint and Swagger UI were also confirmed operational during the final deployment troubleshooting.
 
-The current implementation meets a meaningful subset of the course project goals. However, the repository audit identified gaps against the broader final-assessment checklist, notably group/team permissions, brute-force lockout, CSV export, and a dedicated failed-login security view. These are explicitly documented as limitations rather than presented as completed features.
+The current implementation meets a meaningful subset of the course project goals. The PROJECT AVENGERS workspace provides a configured shared group environment with role-based member permissions for viewing, creating, updating, and assigning group resources. The implementation also has remaining gaps against the broader final-assessment checklist, including brute-force lockout, CSV export, and a dedicated failed-login security view. These limitations are documented rather than presented as completed features.
 
 ## 2. Problem statement and objectives
 
@@ -181,8 +181,8 @@ https://github.com/Pistol-Saint/2110400-S6-SaintsNexus/pulls
 No additional issue-to-PR mapping is claimed here unless independently verified.
 ## 10. Known gaps and future improvements
 
-The following broader assessment requirements were not found in the inspected main-branch source and should be treated as incomplete:
-1. Shared groups/teams, membership management, and granular permissions.
+The following broader assessment requirements remain incomplete or are only partially implemented:
+1. General-purpose group creation and membership administration. The current implementation provides the configured PROJECT AVENGERS workspace and permission-controlled resource operations.
 2. Login brute-force protection and temporary lockout.
 3. CSV export for users, records, or activity.
 4. Server-side user search, filtering, and pagination. The current frontend implements client-side search, role/status filters, and pagination over loaded users.
@@ -205,7 +205,7 @@ Saints Nexus demonstrates a deployed full-stack web application with course mana
 - Python, PyJWT, pwdlib/Argon2, pytest documentation.
 - Git and GitHub documentation.
 
-**AI assistance disclosure:** ChatGPT was used as an AI-assisted development and documentation aid for troubleshooting, code review/explanation, planning, and drafting/editing project documentation. The student must review all generated suggestions, verify the final code and report, and be prepared to explain the implementation. Amend this statement to accurately reflect the actual assistance used and the faculty's required disclosure format.
+**AI assistance disclosure:** OpenAI ChatGPT was used as an AI-assisted tool during project development for technical troubleshooting, programming guidance, explanation and review of implementation approaches, debugging support, project planning, and drafting and editing documentation. The student remains responsible for the submitted source code, implementation decisions, testing, verification, and final project work, and should be able to explain the submitted implementation.
 
 ## Appendix A - Evidence
 

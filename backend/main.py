@@ -1,4 +1,4 @@
-
+﻿
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -9,6 +9,7 @@ from routers.auth import router as auth_router
 from routers.auth import get_current_admin
 from routers.profile import router as profile_router
 from routers.admin import router as admin_router
+from routers.groups import router as groups_router
 
 
 app = FastAPI(title="Saints Nexus API")
@@ -32,6 +33,7 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(profile_router)
 app.include_router(admin_router)
+app.include_router(groups_router)
 
 
 # Health Check
