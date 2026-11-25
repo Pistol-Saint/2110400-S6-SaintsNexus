@@ -12,3 +12,6 @@ frontend/dist/
 .vercel/
 .vscode/*
 !.vscode/extensions.json
+# Local environment files
+.env.*
+!.env.example

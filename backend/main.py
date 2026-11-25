@@ -1,24 +1,20 @@
-import os
-from pathlib import Path
 
-from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
-from supabase import create_client, Client
 
-# Load Supabase credentials from backend/.env
-load_dotenv(Path(__file__).resolve().parent / ".env")
+from backend.database import supabase
+from backend.schemas.course import CourseCreate, CourseUpdate
 
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+from backend.routers.auth import router as auth_router
+from backend.routers.auth import get_current_admin
+from backend.routers.profile import router as profile_router
+from backend.routers.admin import router as admin_router
 
-if not SUPABASE_URL or not SUPABASE_KEY:
-    raise RuntimeError("Supabase credentials are missing from backend/.env")
-
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 app = FastAPI(title="Saints Nexus API")
+
+
+# CORS Configuration
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -32,129 +28,125 @@ app.add_middleware(
 )
 
 
-# Course request models
-class CourseCreate(BaseModel):
-    title: str = Field(min_length=1)
-    description: str | None = None
-    price: float = Field(default=0, ge=0)
+# Register Application Routers
+app.include_router(auth_router)
+app.include_router(profile_router)
+app.include_router(admin_router)
 
 
-class CourseUpdate(BaseModel):
-    title: str | None = Field(default=None, min_length=1)
-    description: str | None = None
-    price: float | None = Field(default=None, ge=0)
-
-
-# Existing health endpoint
+# Health Check
 @app.get("/api/health")
-def health():
+def health_check():
     return {"status": "ok"}
 
 
-# Existing hello endpoint
+# Hello Endpoint
 @app.get("/api/hello")
 def hello(name: str = "World"):
     return {"message": f"Hello, {name}!"}
 
 
-# CREATE a course
+# ==========================================
+# COURSE MANAGEMENT
+# ==========================================
+
+# Only administrators can create courses
 @app.post("/api/courses")
-def create_course(course: CourseCreate):
-    try:
-        result = supabase.table("courses").insert(
-            course.model_dump()
-        ).execute()
-        return result.data[0]
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+def create_course(
+    course: CourseCreate,
+    admin: dict = Depends(get_current_admin),
+):
+    result = supabase.table("courses").insert(
+        course.model_dump()
+    ).execute()
+
+    return result.data[0]
 
 
-# READ all courses
+# All users can view courses
 @app.get("/api/courses")
 def get_courses():
-    try:
-        result = (
-            supabase.table("courses")
-            .select("*")
-            .order("id", desc=True)
-            .execute()
-        )
-        return result.data
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    result = (
+        supabase.table("courses")
+        .select("*")
+        .order("id", desc=True)
+        .execute()
+    )
+
+    return result.data
 
 
-# READ one course
+# View individual course
 @app.get("/api/courses/{course_id}")
 def get_course(course_id: int):
-    try:
-        result = (
-            supabase.table("courses")
-            .select("*")
-            .eq("id", course_id)
-            .execute()
+    result = (
+        supabase.table("courses")
+        .select("*")
+        .eq("id", course_id)
+        .execute()
+    )
+
+    if not result.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Course not found"
         )
 
-        if not result.data:
-            raise HTTPException(status_code=404, detail="Course not found")
-
-        return result.data[0]
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    return result.data[0]
 
 
-# UPDATE a course
+# Only administrators can update courses
 @app.put("/api/courses/{course_id}")
-def update_course(course_id: int, course: CourseUpdate):
-    try:
-        updates = course.model_dump(exclude_unset=True)
+def update_course(
+    course_id: int,
+    course: CourseUpdate,
+    admin: dict = Depends(get_current_admin),
+):
+    updates = course.model_dump(exclude_unset=True)
 
-        if not updates:
-            raise HTTPException(status_code=400, detail="No update data provided")
-
-        result = (
-            supabase.table("courses")
-            .update(updates)
-            .eq("id", course_id)
-            .execute()
+    if not updates:
+        raise HTTPException(
+            status_code=400,
+            detail="No fields to update"
         )
 
-        if not result.data:
-            raise HTTPException(status_code=404, detail="Course not found")
+    result = (
+        supabase.table("courses")
+        .update(updates)
+        .eq("id", course_id)
+        .execute()
+    )
 
-        return result.data[0]
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    if not result.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Course not found"
+        )
+
+    return result.data[0]
 
 
-# DELETE a course
+# Only administrators can delete courses
+# Only administrators can delete courses
 @app.delete("/api/courses/{course_id}")
-def delete_course(course_id: int):
-    try:
-        result = (
-            supabase.table("courses")
-            .delete()
-            .eq("id", course_id)
-            .execute()
+def delete_course(
+    course_id: int,
+    admin: dict = Depends(get_current_admin),
+):
+    result = (
+        supabase.table("courses")
+        .delete()
+        .eq("id", course_id)
+        .execute()
+    )
+
+    if not result.data:
+        raise HTTPException(
+            status_code=404,
+            detail="Course not found"
         )
 
-        if not result.data:
-            raise HTTPException(status_code=404, detail="Course not found")
-
-        return {
-            "message": "Course deleted successfully",
-            "course": result.data[0],
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-
-
-
+    return {
+        "message": "Course deleted successfully",
+        "course": result.data[0],
+    }
