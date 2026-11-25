@@ -17,8 +17,8 @@
 | Submission date | 28 November 2026 |
 | Repository | https://github.com/Pistol-Saint/2110400-S6-SaintsNexus |
 | Live frontend | https://2110400-saintsnexus-frontend.vercel.app/ |
-| Live API | https://2110400-saintsnexus-backend.vercel.app/ |
-| API documentation | https://2110400-saintsnexus-backend.vercel.app/docs |
+| Live API | https://2110400-saintsnexus-backend.vercel.app/api/health |
+| API documentation | https://2110400-saintsnexus-backend.vercel.app/api/healthdocs |
 
 ## 1. Executive summary
 
@@ -129,7 +129,7 @@ Exact SQL types, foreign keys, indexes, and Row Level Security policies should b
 | POST | `/api/admin/users/{user_id}/unban` | Unban user |
 | GET | `/api/admin/audit-logs` | Audit history |
 
-The deployed Swagger UI at https://2110400-saintsnexus-backend.vercel.app/docs provides the exact schemas and parameters.
+The deployed Swagger UI at https://2110400-saintsnexus-backend.vercel.app/api/healthdocs provides the exact schemas and parameters.
 
 ## 7. Testing and verification
 
@@ -158,9 +158,9 @@ Previously recorded verification:
 ## 8. Deployment
 
 - Frontend: https://2110400-saintsnexus-frontend.vercel.app/
-- Backend: https://2110400-saintsnexus-backend.vercel.app/
-- Health check: https://2110400-saintsnexus-backend.vercel.app/api/health
-- API documentation: https://2110400-saintsnexus-backend.vercel.app/docs
+- Backend: https://2110400-saintsnexus-backend.vercel.app/api/health
+- Health check: https://2110400-saintsnexus-backend.vercel.app/api/healthapi/health
+- API documentation: https://2110400-saintsnexus-backend.vercel.app/api/healthdocs
 - Source repository: https://github.com/Pistol-Saint/2110400-S6-SaintsNexus
 
 Secrets are configured through environment variables and must not be included in the report or screenshots. The frontend API base URL is configured through `VITE_API_URL`.
