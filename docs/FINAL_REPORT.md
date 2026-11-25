@@ -210,4 +210,4 @@ Attach the screenshots listed in `docs/FINAL_SUBMISSION_CHECKLIST.md`. Each scre
 
 ## Appendix B — Demonstration
 
-Use `docs/DEMO_SCRIPT.md` as a timed walkthrough. Use only test accounts that have been deliberately prepared for assessment. Do not include passwords, access tokens, refresh tokens, or secret environment values in the recording.
+Prepare a concise 5–8 minute walkthrough covering registration/login, course browsing and administration, profile/session management, administrator controls, and the deployed application/API. Use only test accounts deliberately prepared for assessment. Do not include passwords, access tokens, refresh tokens, or secret environment values in the recording.
