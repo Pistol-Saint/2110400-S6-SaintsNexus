@@ -80,7 +80,7 @@ The following is the 21-item evidence capture list from the assessment preparati
 21. [ ] S21 — Pytest results.
 
 ## G. Video and submission
-- [ ] Record a 5–8 minute demonstration using `docs/DEMO_SCRIPT.md`.
+- [ ] Record a 5–8 minute demonstration covering the implemented learner, course, profile/session, and administrator workflows.
 - [ ] Check audio, browser zoom, and deployed URLs before recording.
 - [ ] Ensure no passwords, tokens, private keys, or environment values appear.
 - [ ] Complete the faculty submission form: https://forms.gle/USnKmgZcmZMuFCFP6
