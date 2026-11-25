@@ -2,13 +2,13 @@
 from fastapi import APIRouter, HTTPException, Depends, Request
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from backend.schemas.auth import (
+from schemas.auth import (
     SignupRequest,
     LoginRequest,
     RefreshRequest,
     LogoutRequest,
 )
-from backend.services.auth_service import (
+from services.auth_service import (
     signup_user,
     login_user,
     create_session,
@@ -18,8 +18,8 @@ from backend.services.auth_service import (
     revoke_user_session,
     build_auth_response,
 )
-from backend.database import supabase
-from backend.security.tokens import decode_access_token
+from database import supabase
+from security.tokens import decode_access_token
 
 
 router = APIRouter(prefix="/api/auth", tags=["Authentication"])

@@ -1,9 +1,9 @@
 
 from fastapi import HTTPException
 
-from backend.database import supabase
-from backend.security.passwords import hash_password, verify_password
-from backend.services.auth_service import log_action, current_time
+from database import supabase
+from security.passwords import hash_password, verify_password
+from services.auth_service import log_action, current_time
 
 
 SAFE_PROFILE_FIELDS = "id, email, username, role"

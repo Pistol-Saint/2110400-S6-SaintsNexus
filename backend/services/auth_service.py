@@ -3,10 +3,10 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import HTTPException
 
-from backend.database import supabase
-from backend.security.passwords import hash_password, verify_password
-from backend.security.tokens import create_access_token
-from backend.security.refresh_tokens import (
+from database import supabase
+from security.passwords import hash_password, verify_password
+from security.tokens import create_access_token
+from security.refresh_tokens import (
     create_refresh_token,
     hash_refresh_token,
 )

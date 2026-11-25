@@ -2,13 +2,13 @@
 from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
-from backend.database import supabase
-from backend.schemas.course import CourseCreate, CourseUpdate
+from database import supabase
+from schemas.course import CourseCreate, CourseUpdate
 
-from backend.routers.auth import router as auth_router
-from backend.routers.auth import get_current_admin
-from backend.routers.profile import router as profile_router
-from backend.routers.admin import router as admin_router
+from routers.auth import router as auth_router
+from routers.auth import get_current_admin
+from routers.profile import router as profile_router
+from routers.admin import router as admin_router
 
 
 app = FastAPI(title="Saints Nexus API")

@@ -1,9 +1,9 @@
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 
-from backend.routers.auth import get_current_admin
-from backend.database import supabase
-from backend.services.auth_service import current_time, log_action
+from routers.auth import get_current_admin
+from database import supabase
+from services.auth_service import current_time, log_action
 
 
 router = APIRouter(prefix="/api/admin", tags=["Administration"])

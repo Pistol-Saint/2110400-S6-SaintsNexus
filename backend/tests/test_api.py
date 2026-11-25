@@ -3,10 +3,10 @@ from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 
-import backend.main as main_module
-from backend.main import app
-from backend.routers.auth import get_current_admin
-from backend.security.passwords import hash_password, verify_password
+import main as main_module
+from main import app
+from routers.auth import get_current_admin
+from security.passwords import hash_password, verify_password
 
 
 client = TestClient(app)

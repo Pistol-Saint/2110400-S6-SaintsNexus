@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-from backend.routers.auth import get_current_user
-from backend.schemas.profile import (
+from routers.auth import get_current_user
+from schemas.profile import (
     ProfileUpdateRequest,
     PasswordChangeRequest
 )
-from backend.services.profile_service import (
+from services.profile_service import (
     update_profile,
     change_password
 )
-from backend.security.tokens import decode_access_token
+from security.tokens import decode_access_token
 
 router = APIRouter(prefix="/api/profile", tags=["Profile"])
 security = HTTPBearer()
