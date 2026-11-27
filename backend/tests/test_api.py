@@ -4,6 +4,7 @@ from types import SimpleNamespace
 from fastapi.testclient import TestClient
 
 import main as main_module
+import routers.admin as admin_router
 from main import app
 from routers.auth import get_current_admin
 from security.passwords import hash_password, verify_password
@@ -22,6 +23,9 @@ class FakeQuery:
         return self
 
     def order(self, *args, **kwargs):
+        return self
+
+    def limit(self, *args, **kwargs):
         return self
 
     def eq(self, *args, **kwargs):
@@ -155,3 +159,92 @@ def test_me_endpoint_requires_authentication():
     response = client.get("/api/auth/me")
 
     assert response.status_code == 401
+
+
+# ==========================================
+# ADMIN CSV EXPORT TESTS
+# ==========================================
+
+def test_admin_can_export_users_csv(monkeypatch):
+    sample_users = [
+        {
+            "id": "user-1",
+            "email": "learner@example.com",
+            "username": "=1+1",
+            "role": "user",
+            "is_banned": False,
+            "ban_reason": None,
+            "created_at": "2026-11-27T10:00:00",
+            "updated_at": "2026-11-27T10:00:00",
+            "password_hash": "must-not-be-exported",
+        }
+    ]
+
+    monkeypatch.setattr(
+        admin_router,
+        "supabase",
+        FakeSupabase(sample_users),
+    )
+
+    app.dependency_overrides[get_current_admin] = lambda: {
+        "id": "test-admin",
+        "role": "admin",
+    }
+
+    try:
+        response = client.get("/api/admin/exports/users")
+    finally:
+        app.dependency_overrides.pop(get_current_admin, None)
+
+    assert response.status_code == 200
+    assert "text/csv" in response.headers["content-type"]
+    assert "attachment" in response.headers["content-disposition"]
+    assert "saints-nexus-users.csv" in response.headers["content-disposition"]
+    assert "learner@example.com" in response.text
+    assert "'=1+1" in response.text
+    assert "password_hash" not in response.text
+    assert "must-not-be-exported" not in response.text
+
+
+def test_admin_can_export_audit_logs_csv(monkeypatch):
+    sample_logs = [
+        {
+            "id": 101,
+            "user_id": "admin-1",
+            "action": "user_banned",
+            "details": {"target_user_id": "user-1"},
+            "ip_address": "127.0.0.1",
+            "created_at": "2026-11-27T10:00:00",
+        }
+    ]
+
+    monkeypatch.setattr(
+        admin_router,
+        "supabase",
+        FakeSupabase(sample_logs),
+    )
+
+    app.dependency_overrides[get_current_admin] = lambda: {
+        "id": "test-admin",
+        "role": "admin",
+    }
+
+    try:
+        response = client.get("/api/admin/exports/audit-logs")
+    finally:
+        app.dependency_overrides.pop(get_current_admin, None)
+
+    assert response.status_code == 200
+    assert "text/csv" in response.headers["content-type"]
+    assert "attachment" in response.headers["content-disposition"]
+    assert "saints-nexus-audit-logs.csv" in response.headers["content-disposition"]
+    assert "user_banned" in response.text
+    assert "target_user_id" in response.text
+
+
+def test_csv_exports_require_admin_authentication():
+    users_response = client.get("/api/admin/exports/users")
+    logs_response = client.get("/api/admin/exports/audit-logs")
+
+    assert users_response.status_code == 401
+    assert logs_response.status_code == 401

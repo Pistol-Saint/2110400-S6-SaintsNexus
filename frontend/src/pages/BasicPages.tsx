@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
-import { apiRequest } from "../services/api";
+import { apiDownload, apiRequest } from "../services/api";
 
 interface AdminUser {
   id: string;
@@ -726,6 +726,7 @@ export function AdminDashboard() {
 
   const [loading, setLoading] = useState(true);
   const [savingId, setSavingId] = useState<string | null>(null);
+  const [exporting, setExporting] = useState<"users" | "audit-logs" | null>(null);
 
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
@@ -781,6 +782,40 @@ export function AdminDashboard() {
     void loadAdminData();
   }, [loadAdminData]);
 
+
+  // Download administrator CSV exports.
+  async function exportCsv(kind: "users" | "audit-logs") {
+    setExporting(kind);
+    setError("");
+    setMessage("");
+
+    const isUsers = kind === "users";
+
+    try {
+      await apiDownload(
+        isUsers
+          ? "/api/admin/exports/users"
+          : "/api/admin/exports/audit-logs",
+        isUsers
+          ? "saints-nexus-users.csv"
+          : "saints-nexus-audit-logs.csv"
+      );
+
+      setMessage(
+        isUsers
+          ? "User CSV exported successfully."
+          : "Audit log CSV exported successfully."
+      );
+    } catch (err) {
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Unable to export the CSV file."
+      );
+    } finally {
+      setExporting(null);
+    }
+  }
 
   // Change user role
   async function changeRole(target: AdminUser) {
@@ -1052,6 +1087,15 @@ export function AdminDashboard() {
             <button
               type="button"
               className="secondary-button"
+              onClick={() => void exportCsv("users")}
+              disabled={exporting !== null}
+            >
+              {exporting === "users" ? "Exporting..." : "Export Users CSV"}
+            </button>
+
+            <button
+              type="button"
+              className="secondary-button"
               onClick={() => void loadAdminData()}
               disabled={loading}
             >
@@ -1314,6 +1358,15 @@ export function AdminDashboard() {
 
               <h2>Administrative Audit Logs</h2>
             </div>
+
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => void exportCsv("audit-logs")}
+              disabled={exporting !== null}
+            >
+              {exporting === "audit-logs" ? "Exporting..." : "Export Audit CSV"}
+            </button>
 
             <span className="course-count">
               {filteredLogs.length} RECORDS

@@ -1,5 +1,8 @@
+import csv
+import io
 
 from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi.responses import StreamingResponse
 
 from routers.auth import get_current_admin
 from database import supabase
@@ -241,3 +244,114 @@ def get_audit_logs(
     )
 
     return result.data
+
+
+# ==========================================
+# ADMINISTRATOR CSV EXPORTS
+# ==========================================
+
+def safe_csv_value(value):
+    """
+    Convert values safely for CSV output.
+    Prevent spreadsheet formula injection.
+    """
+    if value is None:
+        return ""
+
+    if isinstance(value, (dict, list)):
+        import json
+        value = json.dumps(value, ensure_ascii=False)
+
+    value = str(value)
+
+    if value.startswith(("=", "+", "-", "@", "\t", "\r")):
+        value = "'" + value
+
+    return value
+
+
+def create_csv_response(rows, columns, filename):
+    """
+    Generate a downloadable UTF-8 CSV file.
+    """
+    output = io.StringIO(newline="")
+    writer = csv.writer(output)
+
+    writer.writerow(columns)
+
+    for row in rows:
+        writer.writerow([
+            safe_csv_value(row.get(column))
+            for column in columns
+        ])
+
+    csv_content = "\ufeff" + output.getvalue()
+
+    return StreamingResponse(
+        iter([csv_content]),
+        media_type="text/csv; charset=utf-8",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"'
+        },
+    )
+
+
+# Export registered users
+@router.get("/exports/users")
+def export_users_csv(
+    admin: dict = Depends(get_current_admin),
+):
+    result = (
+        supabase.table("users")
+        .select(SAFE_USER_FIELDS)
+        .order("created_at", desc=True)
+        .execute()
+    )
+
+    columns = [
+        "id",
+        "email",
+        "username",
+        "role",
+        "is_banned",
+        "ban_reason",
+        "created_at",
+        "updated_at",
+    ]
+
+    return create_csv_response(
+        result.data or [],
+        columns,
+        "saints-nexus-users.csv",
+    )
+
+
+# Export administrative audit logs
+@router.get("/exports/audit-logs")
+def export_audit_logs_csv(
+    admin: dict = Depends(get_current_admin),
+):
+    result = (
+        supabase.table("audit_logs")
+        .select("*")
+        .order("created_at", desc=True)
+        .limit(5000)
+        .execute()
+    )
+
+    rows = result.data or []
+
+    columns = list(rows[0].keys()) if rows else [
+        "id",
+        "user_id",
+        "action",
+        "details",
+        "ip_address",
+        "created_at",
+    ]
+
+    return create_csv_response(
+        rows,
+        columns,
+        "saints-nexus-audit-logs.csv",
+    )

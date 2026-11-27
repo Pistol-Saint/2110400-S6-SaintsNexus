@@ -61,7 +61,7 @@ The following is the 21-item evidence capture list from the assessment preparati
 2. [ ] S2 â€” Logged-in learner dashboard and course catalogue.
 3. [ ] S3 â€” Profile page and incorrect current-password rejection.
 4. [ ] S4 â€” Session list and revoke action.
-5. [ ] S5 â€” Group members and permissions (not present in inspected implementation).
+5. [ ] S5 - Capture PROJECT AVENGERS group members and their Create, Update, Assign, and View permissions.
 6. [ ] S6 â€” RBAC-denied action and 403 response.
 7. [ ] S7 â€” Expired access token rejected with 401.
 8. [ ] S8 â€” Refresh request and newly issued access token (not an HttpOnly cookie in current implementation).

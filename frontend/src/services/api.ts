@@ -172,3 +172,76 @@ export async function apiRequest<T>(
 
   return response.json() as Promise<T>;
 }
+
+
+// Download an authenticated file and refresh the access token once if needed.
+export async function apiDownload(
+  path: string,
+  filename: string,
+  hasRetried = false
+): Promise<void> {
+  const headers = new Headers();
+  const token = getStoredAccessToken();
+
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+
+  let response: Response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "GET",
+      headers,
+    });
+  } catch {
+    throw new Error(
+      "Unable to connect to the Saints Nexus server. Please check your connection."
+    );
+  }
+
+  if (response.status === 401 && !hasRetried) {
+    const refreshed = await refreshAccessToken();
+
+    if (refreshed) {
+      return apiDownload(path, filename, true);
+    }
+
+    clearAuthSession();
+
+    throw new Error(
+      "Your session has expired. Please log in again."
+    );
+  }
+
+  if (!response.ok) {
+    let errorMessage = `Download failed (${response.status}).`;
+
+    try {
+      const errorData = await response.json();
+
+      if (typeof errorData.detail === "string") {
+        errorMessage = errorData.detail;
+      } else if (errorData.message) {
+        errorMessage = errorData.message;
+      }
+    } catch {
+      // Keep the default download error.
+    }
+
+    throw new Error(errorMessage);
+  }
+
+  const blob = await response.blob();
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+
+  link.href = objectUrl;
+  link.download = filename;
+
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+
+  URL.revokeObjectURL(objectUrl);
+}
